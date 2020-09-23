@@ -1,0 +1,117 @@
+﻿@page "/import"
+
+@inherits ReactiveUI.Blazor.ReactiveComponentBase<ProductImportViewModel>
+@using System.Reactive.Threading.Tasks;
+@using System.IO;
+
+<Card Margin="Margin.Is4.OnY">
+    <CardHeader>
+        <CardTitle>Nhập hàng</CardTitle>
+    </CardHeader>
+    <CardBody>
+        <Fields>
+            <Field ColumnSize="ColumnSize.Is6.OnDesktop">
+                <FieldLabel>Tên</FieldLabel>
+                <FieldBody>
+                    <TextEdit @bind-Text="ViewModel.NewProduct.NameFull" Placeholder="Nhập tên đầy đủ...">
+                        <FieldHelp>Tên này sẽ được dùng để tìm kiếm.</FieldHelp>
+                    </TextEdit>
+                </FieldBody>
+            </Field>
+
+            <Field ColumnSize="ColumnSize.Is6.OnDesktop">
+                <FieldLabel>Phân loại</FieldLabel>
+                <FieldBody>
+                    @if (ViewModel.LoadCategoryResults is not null)
+                    {
+                        <Select TValue="int" @bind-SelectedValue="ViewModel.NewProduct.CategoryId">
+                            @foreach (var item in ViewModel.LoadCategoryResults)
+                            {
+                                @if (item.Items is null || !item.Items.Any())
+                                {
+                                    <SelectItem Value="@item.Id">@item.Name</SelectItem>
+                                }
+                                else
+                                {
+                                    <SelectGroup Label="@item.Name">
+                                        @foreach (var child in item.Items)
+                                        {
+                                            <SelectItem Value="@child.Id">@child.Name</SelectItem>
+                                        }
+
+                                    </SelectGroup>
+                                }
+                            }
+                        </Select>
+                    }
+                </FieldBody>
+            </Field>
+        </Fields>
+        <Field>
+            <FieldLabel>Thông tin thêm</FieldLabel>
+            <FieldBody>
+                <MemoEdit @bind-Text="ViewModel.NewProduct.Description" Rows="3" />
+            </FieldBody>
+        </Field>
+
+        <Fields>
+            <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                <FieldLabel>Số lượng</FieldLabel>
+                <FieldBody>
+                    <NumericEdit @bind-Value="ViewModel.NewProduct.Quantity" TValue="int" />
+                </FieldBody>
+            </Field>
+
+            <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                <FieldLabel>Giá mua</FieldLabel>
+                <FieldBody>
+                    <NumericEdit @bind-Value="ViewModel.NewProduct.PriceBuy" TValue="long" />
+                </FieldBody>
+            </Field>
+
+            <Field ColumnSize="ColumnSize.Is4.OnDesktop">
+                <FieldLabel>Giá bán</FieldLabel>
+                <FieldBody>
+                    <NumericEdit @bind-Value="ViewModel.NewProduct.PriceSell" TValue="long" />
+                </FieldBody>
+            </Field>
+        </Fields>
+        <Field>
+            <FieldLabel>Hình minh họa</FieldLabel>
+            <FieldBody>
+                <FileEdit Filter="image/*" Changed="@OnChanged" />
+            </FieldBody>
+        </Field>
+        @if (!string.IsNullOrWhiteSpace(ViewModel.NewProduct.ImageContent))
+        {
+            <Figure Size="FigureSize.Is16x16" >
+                <FigureImage Style="height:256px;" Source="@($"data:image/jpeg;base64,{ViewModel.NewProduct.ImageContent}")" Rounded="true" />
+                <FigureCaption>A caption for the above image.</FigureCaption>
+            </Figure>
+        }
+        <Field>
+            <FieldLabel>Vị trí</FieldLabel>
+            <FieldBody>
+                <TextEdit @bind-Text="ViewModel.NewProduct.Location" Placeholder="Vị trí sắp xếp...">
+                </TextEdit>
+            </FieldBody>
+        </Field>
+
+        <Field Class="text-right" JustifyContent="JustifyContent.End">
+            <FieldBody ColumnSize="ColumnSize.Is9.Is3.WithOffset">
+                <Button Clicked="@(()=> ViewModel.Save.Execute().ToTask())" Color="Color.Primary">Lưu</Button>
+            </FieldBody>
+        </Field>
+    </CardBody>
+</Card>
+
+@code {
+    async Task OnChanged(FileChangedEventArgs e)
+    {
+        var file = e.Files.FirstOrDefault();
+        using var stream = new MemoryStream();
+        await file.WriteToStreamAsync(stream);
+        stream.Seek(0, SeekOrigin.Begin);
+        ViewModel.NewProduct.ImageContent = Convert.ToBase64String(stream.ToArray());
+    }
+}

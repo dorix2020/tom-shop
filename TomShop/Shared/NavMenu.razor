@@ -1,0 +1,70 @@
+﻿<LayoutSider>
+    <LayoutSiderContent>
+        <Bar Breakpoint="Breakpoint.Desktop"
+             NavigationBreakpoint="Breakpoint.Tablet"
+             ThemeContrast="ThemeContrast.Dark"
+             Mode="BarMode.VerticalInline"
+             CollapseMode="BarCollapseMode.Small">
+            <BarBrand>
+                <BarItem>
+                    <BarLink To="">
+                        <BarIcon IconName="_customIcon" />
+                        Tom Shop
+                    </BarLink>
+                </BarItem>
+            </BarBrand>
+            <BarMenu>
+                <BarStart>
+                    <BarItem>
+                        <BarLink To="">
+                            <BarIcon IconName="IconName.Dashboard" />
+                            Dashboard
+                        </BarLink>
+                    </BarItem>
+                    <BarItem>
+                        <BarLink To="import">
+                            <BarIcon IconName="IconName.Add" />
+                            Nhập hàng
+                        </BarLink>
+                    </BarItem>
+                    @if (categoryList is not null)
+                    {
+                        @foreach (var category in categoryList)
+                        {
+                            @if (category.Children is null || !category.Children.Any())
+                            {
+                                <BarItem>
+                                    <BarLink To="@category.Details?.LinkTo">
+                                        @category.Name
+                                    </BarLink>
+                                </BarItem>
+                            }
+                            else
+                            {
+                                <BarItem>
+                                    <BarDropdown>
+                                        <BarDropdownToggle>
+                                            @category.Name
+                                        </BarDropdownToggle>
+                                        <BarDropdownMenu>
+                                            @foreach (var item in category.Children)
+                                            {
+                                                <BarDropdownItem To="@item.Details?.LinkTo">
+                                                    @item.Name
+                                                </BarDropdownItem>
+                                            }
+                                        </BarDropdownMenu>
+                                    </BarDropdown>
+                                </BarItem>
+                            }
+                        }
+                    }
+                </BarStart>
+            </BarMenu>
+        </Bar>
+    </LayoutSiderContent>
+</LayoutSider>
+
+@code{
+    readonly RenderFragment _customIcon =@<img src="/favicon.ico" style="width:32px; height: 32px" alt="Home" />;
+}

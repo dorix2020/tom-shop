@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazorise.Components" Version="0.9.1.2" />
+    <PackageReference Include="Blazorise.Icons.Material" Version="0.9.1.2" />
+    <PackageReference Include="Blazorise.Material" Version="0.9.1.2" />
+    <PackageReference Include="ReactiveUI.Blazor" Version="11.5.35" />
+    <PackageReference Include="ReactiveUI.Fody" Version="11.5.35" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TomShop.Data\TomShop.Data.csproj" />
+  </ItemGroup>
+
+</Project>
