@@ -1,0 +1,110 @@
+﻿@page "/"
+@page "/search"
+
+@inherits ReactiveUI.Blazor.ReactiveComponentBase<ProductSearchViewModel>
+@using System.Reactive.Threading.Tasks;
+
+<Card Margin="Margin.Is4.OnY">
+    <CardBody>
+        <Row>
+            <Column ColumnSize="ColumnSize.IsFull">
+                <Card Margin="Margin.Is4.OnY">
+                    <CardBody>
+                        <CardTitle Size="5">Đơn hàng</CardTitle>
+                        <Table Hoverable="true">
+                            <TableHeader ThemeContrast="ThemeContrast.Light">
+                                <TableRow>
+                                    <TableHeaderCell>Tên</TableHeaderCell>
+                                    <TableHeaderCell>Số lượng đặt</TableHeaderCell>
+                                    <TableHeaderCell>Giá</TableHeaderCell>
+                                    <TableHeaderCell>Tổng</TableHeaderCell>
+                                </TableRow>
+                            </TableHeader>
+                            @if (ViewModel.Cart is not null)
+                            {
+                                <TableBody>
+                                    @foreach (var item in ViewModel.Cart.Products)
+                                    {
+                                        <TableRow>
+                                            <TableRowCell>@item.NameFull</TableRowCell>
+                                            <TableRowCell><NumericEdit TValue="int" Value="@item.Quantity" ValueChanged="@(x => { item.Quantity = x; })" /></TableRowCell>
+                                            <TableRowCell>@item.PriceSell</TableRowCell>
+                                            <TableRowCell>@item.Total</TableRowCell>
+                                        </TableRow>
+                                    }
+                                </TableBody>
+                                @if (ViewModel.Cart.Products.Any())
+                                {
+                                    <TableFooter>
+                                        <TableRow>
+                                            <TableRowCell>Tổng tiền</TableRowCell>
+                                            <TableRowCell></TableRowCell>
+                                            <TableRowCell></TableRowCell>
+                                            <TableRowCell>@ViewModel.Cart.TotalAmount</TableRowCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableRowCell>Giảm</TableRowCell>
+                                            <TableRowCell></TableRowCell>
+                                            <TableRowCell></TableRowCell>
+                                            <TableRowCell><NumericEdit TValue="long" Value="@ViewModel.Cart.DiscountAmount" ValueChanged="@(x => { ViewModel.Cart.DiscountAmount = x; })" /></TableRowCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableRowCell>Tiền cần thanh toán</TableRowCell>
+                                            <TableRowCell></TableRowCell>
+                                            <TableRowCell></TableRowCell>
+                                            <TableRowCell>@ViewModel.Cart.FinalAmount</TableRowCell>
+                                        </TableRow>
+                                    </TableFooter>
+                                }
+                            }
+                        </Table>
+                    </CardBody>
+                </Card>
+            </Column>
+        </Row>
+
+        <Row>
+            <Column ColumnSize="ColumnSize.IsFull">
+                <Card Margin="Margin.Is4.OnY">
+                    <CardBody>
+                        <CardTitle Size="5">Tìm kiếm sản phẩm</CardTitle>
+
+                        <Autocomplete Data="@ViewModel.LoadKeywordsResults"
+                                      TextField="@((item)=>item.NameFull)"
+                                      ValueField="@((item)=>item.Id)"
+                                      SelectedValue="@SelectedSearchValue"
+                                      Placeholder="Search..."
+                                      Filter="AutocompleteFilter.Contains"
+                                      SearchChanged="@(newValue => ViewModel.SearchKeyword = newValue)" />
+
+                        @if (ViewModel.SearchResults is not null)
+                        {
+                            <Table Hoverable="true" Narrow="true">
+                                <TableHeader ThemeContrast="ThemeContrast.Light">
+                                    <TableRow>
+                                        <TableHeaderCell>Tên</TableHeaderCell>
+                                        <TableHeaderCell>Sô lượng tồn</TableHeaderCell>
+                                        <TableHeaderCell>Giá bán</TableHeaderCell>
+                                        <TableHeaderCell></TableHeaderCell>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    @foreach (var item in ViewModel.SearchResults)
+                                    {
+                                        <TableRow>
+                                            <TableRowCell>@item.NameFull</TableRowCell>
+                                            <TableRowCell>@item.Quantity</TableRowCell>
+                                            <TableRowCell>@item.PriceSell</TableRowCell>
+                                            <TableRowCell><Button Clicked="@(()=>ViewModel.AddToCart.Execute(item).ToTask())">Thêm</Button></TableRowCell>
+                                        </TableRow>
+                                    }
+                                </TableBody>
+                            </Table>
+                        }
+                    </CardBody>
+                </Card>
+            </Column>
+        </Row>
+
+    </CardBody>
+</Card>
