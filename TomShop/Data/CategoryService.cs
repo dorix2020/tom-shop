@@ -53,7 +53,7 @@ namespace TomShop.Data
     public class SelectItem<T> where T : struct
     {
         public T Id { get; set; }
-        public Nullable<T> ParentId { get; set; }
+        public T? ParentId { get; set; }
         public string Name { get; set; }
         public List<SelectItem<T>> Items { get; set; } = new List<SelectItem<T>>();
     }

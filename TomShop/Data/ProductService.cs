@@ -38,25 +38,25 @@ namespace TomShop.Data
 
         public async Task<List<TProductEntityDto>> SearchProduct(ProductSearchFilter filter)
         {
-            Console.WriteLine($"Debug {filter.Keyword}");
-            using var db = _contextFactory.CreateDbContext();
-            var query = db.TProduct.AsNoTracking();
-            if (filter.Id.HasValue)
+            try
             {
-                query = query.Where(x => x.Id == filter.Id);
+                Console.WriteLine($"Debug {filter.Keyword}");
+                using var db = _contextFactory.CreateDbContext();
+                var query = db.TProduct.FromSqlInterpolated($"select a.* from TProduct as a INNER JOIN FREETEXTTABLE(TProduct, NameFull, {filter.Keyword}) as b ON a.Id = b.[KEY] ORDER BY b.RANK DESC OFFSET 0 ROWS ").AsNoTracking();
+                return await query.Select(x => new TProductEntityDto
+                {
+                    Id = x.Id,
+                    NameFull = x.NameFull,
+                    ImagePath = x.ImagePath,
+                    PriceSell = x.PriceSell,
+                    Quantity = x.Quantity,
+                }).ToListAsync();
             }
-            else
+            catch(Exception ex)
             {
-                query = query.Where(x => x.NameFull.Contains(filter.Keyword));
+                Console.WriteLine(ex);
+                return new List<TProductEntityDto>();
             }
-            return await query.Select(x => new TProductEntityDto
-            {
-                Id = x.Id,
-                NameFull = x.NameFull,
-                ImagePath = x.ImagePath,
-                PriceSell = x.PriceSell,
-                Quantity = x.Quantity,
-            }).ToListAsync();
         }
 
         public static string RemoveAccents(string input)
@@ -72,7 +72,7 @@ namespace TomShop.Data
         {
             Console.WriteLine(model.Description);
 
-            await SaveImageToDisk(model.ImageContent);
+            var path = await SaveImageToDisk(model.ImageContent);
             using var db = _contextFactory.CreateDbContext();
             db.TProduct.Add(new TProduct
             {
@@ -84,6 +84,7 @@ namespace TomShop.Data
                 PriceBuy = model.PriceBuy,
                 PriceSell = model.PriceSell,
                 Quantity = model.Quantity,
+                ImagePath = path
             });
             await db.SaveChangesAsync();
         }
