@@ -69,13 +69,7 @@
                     <CardBody>
                         <CardTitle Size="5">Tìm kiếm sản phẩm</CardTitle>
 
-                        <Autocomplete Data="@ViewModel.LoadKeywordsResults"
-                                      TextField="@((item)=>item.NameFull)"
-                                      ValueField="@((item)=>item.Id)"
-                                      SelectedValue="@SelectedSearchValue"
-                                      Placeholder="Search..."
-                                      Filter="AutocompleteFilter.Contains"
-                                      SearchChanged="@(newValue => ViewModel.SearchKeyword = newValue)" />
+                        <TextEdit @bind-Text="ViewModel.SearchKeyword" Placeholder="Tìm tên hàng..." />
 
                         @if (ViewModel.SearchResults is not null)
                         {
