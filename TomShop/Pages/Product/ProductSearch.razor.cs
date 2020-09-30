@@ -1,6 +1,5 @@
 ﻿using DynamicData;
 using DynamicData.Binding;
-using Microsoft.AspNetCore.Components;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -18,17 +17,11 @@ namespace TomShop.Pages.Product
 {
     public partial class ProductSearch
     {
-        [Inject]
-        protected ProductService ProductService { get; set; }
-
         protected override Task OnInitializedAsync()
         {
-            ViewModel = new ProductSearchViewModel(ProductService);
             _ = ViewModel.LoadKeywords.Execute().ToTask();
             return Task.CompletedTask;
         }
-
-        private object SelectedSearchValue { get; set; }
     }
 
     public class ProductSearchViewModel : ReactiveObject
