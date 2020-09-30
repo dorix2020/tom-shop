@@ -39,8 +39,8 @@ namespace TomShop
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<CategoryService>();
             services.AddSingleton<ProductService>();
-            services.AddScoped<ProductSearchViewModel>();
-            services.AddScoped<ProductImportViewModel>();
+            services.AddTransient<ProductSearchViewModel>();
+            services.AddTransient<ProductImportViewModel>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
