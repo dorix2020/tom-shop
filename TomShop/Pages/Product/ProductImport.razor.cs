@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
@@ -7,19 +6,14 @@ using System.Reactive;
 using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using TomShop.Data;
-using TomShop.Data.Dtos;
 using TomShop.Models;
 
 namespace TomShop.Pages.Product
 {
     public partial class ProductImport
     {
-        [Inject] protected CategoryService CategoryService { get; set; }
-        [Inject] protected ProductService ProductService { get; set; }
-
         protected override Task OnInitializedAsync()
         {
-            ViewModel = new ProductImportViewModel(CategoryService, ProductService);
             _ = ViewModel.LoadCategory.Execute().ToTask();
             return Task.CompletedTask;
         }
